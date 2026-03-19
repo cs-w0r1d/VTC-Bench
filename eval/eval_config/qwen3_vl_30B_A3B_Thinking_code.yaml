@@ -1,0 +1,148 @@
+# VTC_Bench Processing Configuration File
+
+# Input configuration
+input:
+  # TSV data file path
+  tsv_path: "VTC_Bench_680.tsv"
+  
+  # Processing range (optional)
+  # Set to null to process all data
+  start_idx: 0
+  end_idx: null  # Change to a number to process the first N items
+
+
+# Output configuration
+output:
+  # Result output directory
+  results_dir: ""
+  
+  # Checkpoint directory (for resuming)
+  checkpoint_dir: null  # 默认为 results_dir/checkpoints
+
+
+# LLM 配置
+llm:
+  # Model type: qwenvl_oai means using OpenAI compatible API (SiliconFlow)
+  model_type: "qwenvl_oai"
+  
+  # The model used
+  # Optional values:
+  model: "Qwen3-VL-30B-A3B-Thinking"
+  model_server: ""
+  
+  
+  # API Key (can also be set via DASHSCOPE_API_KEY environment variable)
+  # api_key: "your_api_key_here"
+  api_key: "EMPTY"
+
+  thought_in_content: true
+  
+  # Generation configuration
+  generate_cfg:
+    use_raw_api: true
+    # Maximum number of retries
+    max_retries: 10
+    
+    # Function call prompt type
+    # fncall_prompt_type: "nous"
+    
+    # Other generation parameters (optional)
+    top_p: 0.95
+    top_k: 20
+    temperature: 0.6
+    repetition_penalty: 1.0
+    presence_penalty: 0
+    max_tokens: 40960
+    seed: 1234
+
+
+# Tools configuration
+tools:
+  enabled:
+    - "code_interpreter"
+
+# Agent configuration
+agent:
+  # Agent name
+  name: "VTC_Bench Agent"
+  
+  # Agent description
+  description: "Agent for answering visual questions on VTC_Bench"
+  
+  # System prompt
+  system_prompt: |
+      Your role is that of a helpful assistant specialized in solving real-world visual problems using image processing tools. Answer questions about images by combining your visual understanding with the precision of available tools.
+      
+      Please follow this structured thinking process and show your work.
+
+      Start an iterative loop for each question:
+
+      - **First, look closely:** Begin with a detailed description of the image in the context of the user's real-life query. List what is immediately visible, and explicitly identify what specific visual details need to be clarified, adjusted, or measured using tools.
+      - **Next, apply tools:** Select and invoke just one appropriate function to process the image.
+      - **Then, review the findings:** Carefully analyze the tool's output (e.g., the processed image, detected features, or status) and decide on your next action (e.g., did the rotation fix the view? do you need further adjustments?).
+
+      Continue this loop until you have sufficient information.
+
+      To finish, bring everything together in a clear, synthesized answer that fully responds to the user's question.
+
+      Image Path **MUST** be Absolute Path. And only **ONE** tool can be used at a time.
+
+# Processing configuration
+processing:
+  num_workers: 30  # Number of worker processes for parallel processing
+
+  # Whether to skip errors and continue processing
+  skip_errors: true
+  
+  # Whether to resume from checkpoint
+  resume_from_checkpoint: false
+  
+  # Progress save interval (save every N items)
+  progress_save_interval: 5
+
+
+# User prompt template
+prompt_template: |
+  <image>
+  
+  {question}
+  
+  ### User Image Path:** "{image_path}"
+  
+  ### User Image Size:** "{image_size}"
+  
+  ### **Output Format (strict adherence required):**
+  
+  <think>Your detailed reasoning process, should go here.</think>
+  
+  <answer>Your final answer to the user's question goes here.</answer>
+
+
+# Analysis configuration (for analyze_vtc_bench_results.py)
+analysis:
+  # Whether to perform exact matching
+  exact_match: true
+  
+  # Whether to perform partial matching
+  partial_match: true
+  
+  # Whether to calculate the accuracy of multiple choice questions
+  option_match: true
+  
+  # Maximum number of error analysis
+  max_error_samples: 10
+
+
+# Logging configuration
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # Whether to output detailed logs
+  verbose: true
+  
+  # Error log location (relative to output/results_dir)
+  error_log_name: "errors_{timestamp}.txt"
+  
+  # Progress log location
+  progress_log_name: "progress_{timestamp}.json"
