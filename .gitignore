@@ -1,0 +1,45 @@
+# 排除图片数据目录
+data/images/
+
+# 排除工作区生成的临时图片
+eval/workspace/tools/opencv/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 模型文件
+*.pt
+*.pth
+*.ckpt
+*.safetensors

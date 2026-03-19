@@ -1,0 +1,187 @@
+# VTC_Bench Processing Configuration File
+# This is the configuration file for the VTC_Bench processing script
+
+# Input configuration
+input:
+  # TSV data file path
+  tsv_path: "VTC_Bench_GTToolChain.tsv"
+  
+  # Processing range (optional)
+  # Set to null to process all data
+  start_idx: 0
+  end_idx: null  # Change to a number to process the first N items
+
+
+# Output configuration
+output:
+  # Result output directory
+  results_dir: ""
+  
+  # Checkpoint directory (for resuming)
+  checkpoint_dir: null  # Default is results_dir/checkpoints
+
+
+# LLM configuration
+llm:
+  # Model type: qwenvl_oai means using OpenAI compatible API (SiliconFlow)
+  model_type: "qwenvl_oai"
+  
+  # The model used
+  # Optional values:
+  model: "Qwen3-VL-30B-A3B-Thinking"
+  model_server: "http://10.245.123.246:8016/v1"
+  
+  
+  # API Key (can also be set via DASHSCOPE_API_KEY environment variable)
+  # api_key: "your_api_key_here"
+  api_key: "EMPTY"
+
+  thought_in_content: true
+  
+  # Generation configuration
+  generate_cfg:
+    use_raw_api: true
+    # Maximum number of retries
+    max_retries: 10
+    
+    # Function call prompt type
+    # fncall_prompt_type: "nous"
+    
+    # Other generation parameters (optional)
+    top_p: 0.95
+    top_k: 20
+    temperature: 0.6
+    repetition_penalty: 1.0
+    presence_penalty: 0
+    max_tokens: 40960
+    seed: 1234
+
+
+# Tools configuration
+tools:
+  enabled:
+    # All available OpenCV tools (35 in total):
+    # # Basic transformations
+    - "opencv_resize"           # 调整图像大小
+    - "opencv_rotate"           # Rotate image
+    - "opencv_translate"        # Translate image
+    - "opencv_flip"             # Flip image
+    - "opencv_crop"             # Crop image
+    - "opencv_zoom_in"          # Zoom in on a specific region
+    # Color space conversion
+    - "opencv_colorspace_gray"  # Convert to grayscale
+    - "opencv_colorspace_hsv"   # Convert to HSV color space
+    - "opencv_colorspace_lab"   # Convert to LAB color space
+    - "opencv_inrange_color"    # Color range filtering
+    # Filtering and noise reduction
+    - "opencv_blur"             # Blurring (Gaussian/median/mean/bilateral)
+    - "opencv_denoise"          # Non-local mean denoising
+    # Edge and gradient detection
+    - "opencv_canny"            # Canny edge detection
+    - "opencv_gradients"        # Sobel/Laplacian gradient detection
+    # Threshold processing
+    - "opencv_threshold"        # Threshold processing (binarization/Otsu/adaptive)
+    # Morphological operations
+    - "opencv_morphology"       # Morphological operations (erosion/dilation/opening/closing)
+    # Contour detection and analysis
+    - "opencv_contours"         # Contour detection
+    - "opencv_contour_area"     # Contour area calculation
+    - "opencv_arc_length"       # Contour arc length calculation
+    - "opencv_approx_poly"      # Contour polygon approximation
+    # Image segmentation
+    - "opencv_watershed"        # Watershed segmentation
+    - "opencv_grabcut"          # GrabCut foreground extraction
+    - "opencv_floodfill"        # Flood fill
+    - "opencv_connected_components_with_stats"  # Connected component analysis
+    # Histogram and contrast enhancement
+    - "opencv_histogram"        # Histogram equalization/CLAHE
+    - "opencv_convertscaleabs"  # Absolute value scaling
+    # Feature detection
+    - "opencv_features"         # Feature point detection (Harris/SIFT/ORB etc.)
+    - "opencv_hough_lines"      # Hough line detection
+    - "opencv_hough_circles"    # Hough circle detection
+    # Template matching
+    - "opencv_template_match"   # Template matching
+    # Frequency domain analysis
+    - "opencv_dft"              # Discrete Fourier transform
+    # Image pyramid
+    - "opencv_pyramid"          # Image pyramid (upsampling/downsampling)
+    # Image repair
+    - "opencv_inpaint"          # Image repair
+    # Drawing tools
+    - "opencv_draw_line"        # Draw line
+    - "opencv_draw_circle"      # Draw circle
+
+# Agent configuration
+agent:
+  # Agent name
+  name: "VTC_Bench Agent"
+  
+  # Agent description
+  description: "Agent for answering visual questions on VTC_Bench"
+  
+  # System prompt
+  system_prompt: |
+      Your role is that of a helpful assistant specialized in solving real-world visual problems using image processing tools. 
+
+      Image Path **MUST** be Absolute Path. And only **ONE** tool can be used at a time.
+
+# Processing configuration
+processing:
+  num_workers: 10  # Number of worker processes for parallel processing
+
+  # Whether to skip errors and continue processing
+  skip_errors: true
+  
+  # Whether to resume from checkpoint
+  resume_from_checkpoint: false
+  
+  # Progress save interval (save every N items)
+  progress_save_interval: 5
+
+
+# User prompt template
+prompt_template: |
+  <image>
+  
+  {question}
+  
+  ### User Image Path:** "{image_path}"
+  
+  ### User Image Size:** "{image_size}"
+  
+  ### **Output Format (strict adherence required):**
+  
+  <think>Your detailed reasoning process, should go here.</think>
+  
+  <answer>Your final answer to the user's question goes here.</answer>
+
+
+# Analysis configuration (for analyze_vtc_bench_results.py)
+analysis:
+  # Whether to perform exact matching
+  exact_match: true
+  
+  # Whether to perform partial matching
+  partial_match: true
+  
+  # Whether to calculate the accuracy of multiple choice questions
+  option_match: true
+  
+  # Maximum number of error analysis
+  max_error_samples: 10
+
+
+# Logging configuration
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  
+  # Whether to output detailed logs
+  verbose: true
+  
+  # Error log location (relative to output/results_dir)
+  error_log_name: "errors_{timestamp}.txt"
+  
+  # Progress log location
+  progress_log_name: "progress_{timestamp}.json"
