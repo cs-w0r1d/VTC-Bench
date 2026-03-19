@@ -63,14 +63,6 @@ Follow these steps to quickly set up the environment and run evaluations on VTC-
    ```bash
    python VTC_Bench_Eval.py -c ./eval_config/gpt_4o_interface.yaml
    ```
-
-### 📊 Evaluation Metrics
-We employ a comprehensive set of metrics to evaluate both the final answer and the reasoning trajectory:
-- **Average Pass Rate (APR):** The proportion of correctly answered questions.
-- **Tool Call Rate (TCR):** The proportion of tasks where the model invokes at least one tool.
-- **Mean Absolute Error (MAE):** The discrepancy in length between the predicted and ground-truth toolchains.
-- **Tool Usage Efficiency (Eff_tool):** The precision of tool-calling sequences, comparing the number of effective steps to the total predicted steps.
-
 ## 💡 Representative Examples of Each Task
 
 VTC-Bench evaluates models across 9 diverse tasks requiring complex toolchaining:
